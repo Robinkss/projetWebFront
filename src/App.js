@@ -3,8 +3,9 @@ import './App.css';
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import Home from './pages/Home';
+import SignUp from './pages/SignUp';
 import './App.scss';
-import {BrowserRouter, Routes, Route} from "react-router-dom";
+import {BrowserRouter, Routes, Route, Link} from "react-router-dom";
 
 
 
@@ -29,18 +30,17 @@ function App() {
   }, []);
 
   return (
-    <div className="App">
-      <Home/>
-      <div>
-        {error ? (
-          <p>{error}</p>
-        ) : (
-          data.map(item => (
-            <p key={item.id_member}>{item.member_mail}</p>
-          ))
-        )}
-      </div>
-    </div>
+    <>
+      <BrowserRouter>
+        <Routes>
+          <Route path="/" element={<Home/>}/>
+          <Route path="/signup" element={<SignUp/>}/>
+          <Route path="/home" element={<Home/>}/>
+        </Routes>
+      </BrowserRouter>
+      
+    </>
+    
   );
 }
 

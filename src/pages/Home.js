@@ -1,13 +1,16 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import axios from 'axios';
 import Header from '../components/Header/Header';
+import Discover from '../components/Discover/Discover';
 
 function Home(){
     return (
         <>
             <Header/>
-            <div>
-                Page d'accueil
-            </div>
+            <body>
+                <Discover/>
+            </body>
+            
         </>
             
         
