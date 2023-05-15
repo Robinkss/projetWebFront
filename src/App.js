@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import Home from './pages/Home';
 import SignUp from './pages/SignUp';
+import Login from './pages/Login';
 import './App.scss';
 import {BrowserRouter, Routes, Route, Link} from "react-router-dom";
 
@@ -35,7 +36,7 @@ function App() {
         <Routes>
           <Route path="/" element={<Home/>}/>
           <Route path="/signup" element={<SignUp/>}/>
-          <Route path="/home" element={<Home/>}/>
+          <Route path="/login" element={<Login/>}/>
         </Routes>
       </BrowserRouter>
       

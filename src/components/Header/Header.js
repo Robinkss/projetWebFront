@@ -31,6 +31,10 @@ function Header() {
 
     return (
         <nav>
+            <div className={styles.unearth}>
+                <img alt='Logo  Unearth' src='./images/logo.png'/>
+                <h1>Unearth</h1>
+            </div>    
             {(toggleMenu || largeur > 500) && (
                 <ul className={styles.liste}>
                     <li className={styles.items}><Link to='/'>Home</Link></li>

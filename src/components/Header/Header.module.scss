@@ -178,9 +178,28 @@
 nav{
     height: 50px;
     background-color: #0e7490;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    .unearth{
+        height: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        img{
+            height: 50px;
+            width: 50px;
+            margin-left: 3px;
+        }
+        h1{
+            margin-left: 3px;
+            color: #fff;
+        }
+    }
 }
 
 .liste{
+    width: auto;
     list-style-type: none;
     background: #0e7490;
     //height: 100%;
@@ -199,6 +218,9 @@ nav{
     display: flex;
     justify-content: center;
     align-items: center;
+    &:hover{
+        background-color: #5D93E0;
+    }
     a{   
         color: #fff;
         font-weight: 'Raleway', sans-serif;
@@ -208,12 +230,13 @@ nav{
         &:after{
             content: '';
             position: absolute;
-            bottom: -5px;
-            left: 0px;
+            bottom: 0px;
+            left: 0;
             width: 0%;
-            height: 2px;
+            height: 3px;
             background-color: #fff;
             transition: 0.4s all ease-in-out;
+            
         }
 
         &:hover{
@@ -222,22 +245,23 @@ nav{
                 right: 0;
             }
         }
+        
     }
 }
     
-        
-
-
-
 
 .btn{
     display: none;
 }
 
 @media screen and (max-width: 500px){
+    nav{
+        flex-wrap: wrap;
+    }
     .liste{
         flex-direction: column;
         flex-wrap: wrap;
+        width: 100%;
     }
     .items:nth-child(1){
         border-top: 1px solid #fff;

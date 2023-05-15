@@ -1,17 +1,23 @@
 import * as React from 'react';
+import { useState, useEffect } from 'react';
+import axios from 'axios';
+import { Link } from "react-router-dom";
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
 import TextField from '@mui/material/TextField';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Checkbox from '@mui/material/Checkbox';
-import Link from '@mui/material/Link';
+//import Link from '@mui/material/Link';
 import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
+import Snackbar from '@mui/material/Snackbar';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
+//import isemail from "isemail";
+
 
 function Copyright(props) {
   return (
@@ -29,6 +35,17 @@ function Copyright(props) {
 const theme = createTheme();
 
 export default function SignUp() {
+
+  const [snackBar, setSnackBar] = useState({
+    open: false,
+    severity:null,
+    message: null
+  });
+
+  useEffect(() => {
+    
+  }, [snackBar]);
+
   const handleSubmit = (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
@@ -36,10 +53,33 @@ export default function SignUp() {
       email: data.get('email'),
       password: data.get('password'),
     });
+    axios.post('http://localhost:3001/members/signup', {
+      mail: data.get('email'), 
+      name: data.get('pseudo'),
+      password: data.get('password'),
+      description: "",
+      photo: "test", 
+      admin: false
+    }).then(response => {
+      setSnackBar({
+        open: true,
+        severity: response.data.severity,
+        message: response.data.message
+      })
+    }).catch(error => {
+      setSnackBar({
+        open: true,
+        severity:error.response.data.severity,
+        message: error.response.data.message
+      })
+    })
+
+    
   };
 
   return (
     <ThemeProvider theme={theme}>
+      <Snackbar message="fefefle"></Snackbar>
       <Container component="main" maxWidth="xs">
         <CssBaseline />
         <Box
@@ -58,33 +98,24 @@ export default function SignUp() {
           </Typography>
           <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 3 }}>
             <Grid container spacing={2}>
-              <Grid item xs={12} sm={6}>
+              <Grid item xs={12}>
                 <TextField
-                  autoComplete="given-name"
-                  name="firstName"
+                  autoComplete="pseudo"
+                  name="pseudo"
                   required
                   fullWidth
-                  id="firstName"
-                  label="First Name"
+                  id="pseudo"
+                  label="Pseudo"
                   autoFocus
                 />
               </Grid>
-              <Grid item xs={12} sm={6}>
-                <TextField
-                  required
-                  fullWidth
-                  id="lastName"
-                  label="Last Name"
-                  name="lastName"
-                  autoComplete="family-name"
-                />
-              </Grid>
+              
               <Grid item xs={12}>
                 <TextField
                   required
                   fullWidth
                   id="email"
-                  label="Email Address"
+                  label="Email"
                   name="email"
                   autoComplete="email"
                 />
@@ -101,9 +132,14 @@ export default function SignUp() {
                 />
               </Grid>
               <Grid item xs={12}>
-                <FormControlLabel
-                  control={<Checkbox value="allowExtraEmails" color="primary" />}
-                  label="I want to receive inspiration, marketing promotions and updates via email."
+                <TextField
+                  required
+                  fullWidth
+                  name="passwordConfirm"
+                  label="Confirm Password"
+                  type="passwordConfirm"
+                  id="passwordConfirm"
+                  autoComplete="confirm new password"
                 />
               </Grid>
             </Grid>
@@ -117,8 +153,8 @@ export default function SignUp() {
             </Button>
             <Grid container justifyContent="flex-end">
               <Grid item>
-                <Link href="#" variant="body2">
-                  Already have an account? Sign in
+                <Link to='/login' variant="body2">
+                  Déjà membre ? Connectez-vous !
                 </Link>
               </Grid>
             </Grid>
