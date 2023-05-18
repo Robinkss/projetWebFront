@@ -1,5 +1,8 @@
 import * as React from 'react';
-import { Link } from "react-router-dom";
+import Cookies from 'js-cookie';
+import axios from 'axios';  
+import { Navigate, Link } from "react-router-dom";
+import { useState, useEffect } from 'react';
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -13,6 +16,7 @@ import Grid from '@mui/material/Grid';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
+import GlobalSnackbar from '../components/GlobalSnackBar/GlobalSnackbar';
 
 function Copyright(props) {
   return (
@@ -30,6 +34,29 @@ function Copyright(props) {
 const theme = createTheme();
 
 export default function SignInSide() {
+
+  const [connected, setConnected] = useState(false);
+  const [snackBar, setSnackBar] = useState({
+    open: false,
+    severity:null,
+    message: null
+  });
+
+  useEffect(() => {
+    if (snackBar.open) {
+      const timer = setTimeout(() => {
+        setSnackBar((prevSnackBar) => ({
+          ...prevSnackBar,
+          open: false
+        }));
+      }, 4000);
+  
+      return () => {
+        clearTimeout(timer);
+      };
+    }
+  }, [snackBar]);
+
   const handleSubmit = (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
@@ -37,10 +64,43 @@ export default function SignInSide() {
       email: data.get('email'),
       password: data.get('password'),
     });
+
+    //Vérification des champs vide
+    if(data.get("email")=="" || data.get("password") == ""){
+      setSnackBar({
+        open: true,
+        severity: "warning",
+        message: "Tous les champs sont obligatoires !"
+      })
+      return;
+    }
+    
+    axios.post('http://localhost:3001/members/login', {
+      mail: data.get('email'),
+      password: data.get('password'),
+    }).then(response => {
+      const {token} = response.data;
+      Cookies.set('token', token, {expires: 1, secure: true});
+      console.log("Utilisateur connecté !");
+      setConnected(true);
+      
+    }).catch(error => {
+      setSnackBar({
+        open: true,
+        severity: "error",
+        message: "Tous les champs sont obligatoires !"
+      })
+      console.log(error);
+    });
   };
+
+  if (connected) {
+    return <Navigate to="/" />;
+  }
 
   return (
     <ThemeProvider theme={theme}>
+      <GlobalSnackbar snackbar={snackBar} setSnackbar={setSnackBar}/>
       <Grid container component="main" sx={{ height: '100vh' }}>
         <CssBaseline />
         <Grid

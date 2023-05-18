@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Link } from "react-router-dom";
+import { Navigate, Link } from "react-router-dom";
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -14,8 +14,9 @@ import Box from '@mui/material/Box';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
-import Snackbar from '@mui/material/Snackbar';
+import { Snackbar, Alert } from '@mui/material';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
+import Login from './Login';
 //import isemail from "isemail";
 
 
@@ -42,9 +43,23 @@ export default function SignUp() {
     message: null
   });
 
+  const [isSignUp, setIsSignUp] = useState(false);
+
   useEffect(() => {
-    
+    if (snackBar.open) {
+      const timer = setTimeout(() => {
+        setSnackBar((prevSnackBar) => ({
+          ...prevSnackBar,
+          open: false
+        }));
+      }, 4000);
+  
+      return () => {
+        clearTimeout(timer);
+      };
+    }
   }, [snackBar]);
+  
 
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -53,6 +68,27 @@ export default function SignUp() {
       email: data.get('email'),
       password: data.get('password'),
     });
+
+    //Vérification des champs vide
+    if(data.get("email")=="" || data.get("pseudo")== "" || data.get("password") == "" || data.get("passwordConfirm") == ""){
+      setSnackBar({
+        open: true,
+        severity: "warning",
+        message: "Tous les champs sont obligatoires !"
+      })
+      return;
+    }
+
+    //Vérification cohérence mot de passe
+    if(data.get("password")!=data.get("passwordConfirm")){
+      setSnackBar({
+        open: true,
+        severity: "warning",
+        message: "Les deux mots de passe ne correspondent pas !"
+      })
+      return;
+    }
+
     axios.post('http://localhost:3001/members/signup', {
       mail: data.get('email'), 
       name: data.get('pseudo'),
@@ -66,20 +102,38 @@ export default function SignUp() {
         severity: response.data.severity,
         message: response.data.message
       })
+      setIsSignUp(true);
+      
     }).catch(error => {
       setSnackBar({
         open: true,
         severity:error.response.data.severity,
         message: error.response.data.message
       })
+      
     })
-
-    
+      
   };
+  if (isSignUp){
+    return (
+      <Navigate to='/login'/>
+    )
+  }
 
   return (
     <ThemeProvider theme={theme}>
-      <Snackbar message="fefefle"></Snackbar>
+      <Snackbar
+        open={snackBar.open}
+        autoHideDuration={4000}
+        onClose={() =>
+          setSnackBar((prevSnackBar) => ({
+            ...prevSnackBar,
+            open: false
+          }))
+        }
+      >
+        <Alert severity={snackBar.severity}>{snackBar.message}</Alert>
+      </Snackbar>
       <Container component="main" maxWidth="xs">
         <CssBaseline />
         <Box
@@ -137,7 +191,7 @@ export default function SignUp() {
                   fullWidth
                   name="passwordConfirm"
                   label="Confirm Password"
-                  type="passwordConfirm"
+                  type="password"
                   id="passwordConfirm"
                   autoComplete="confirm new password"
                 />
@@ -160,7 +214,7 @@ export default function SignUp() {
             </Grid>
           </Box>
         </Box>
-        <Copyright sx={{ mt: 5 }} />
+        <Copyright sx={{ mt: 5 }} />      
       </Container>
     </ThemeProvider>
   );
