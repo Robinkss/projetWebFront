@@ -17,6 +17,7 @@ import Container from '@mui/material/Container';
 import { Snackbar, Alert } from '@mui/material';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import Login from './Login';
+import GlobalSnackbar from '../components/GlobalSnackBar/GlobalSnackbar';
 //import isemail from "isemail";
 
 
@@ -122,18 +123,7 @@ export default function SignUp() {
 
   return (
     <ThemeProvider theme={theme}>
-      <Snackbar
-        open={snackBar.open}
-        autoHideDuration={4000}
-        onClose={() =>
-          setSnackBar((prevSnackBar) => ({
-            ...prevSnackBar,
-            open: false
-          }))
-        }
-      >
-        <Alert severity={snackBar.severity}>{snackBar.message}</Alert>
-      </Snackbar>
+      <GlobalSnackbar snackbar={snackBar} setSnackbar={setSnackBar} vertical='bottom' horizontal='left'/>
       <Container component="main" maxWidth="xs">
         <CssBaseline />
         <Box

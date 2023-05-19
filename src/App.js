@@ -1,46 +1,31 @@
 import logo from './logo.svg';
 import './App.css';
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import axios from 'axios';
+import Header from './components/Header/Header';
 import Home from './pages/Home';
 import SignUp from './pages/SignUp';
 import Login from './pages/Login';
+import Profil from './pages/Profil';
+import Cookies from 'js-cookie';
 import './App.scss';
-import {BrowserRouter, Routes, Route, Link} from "react-router-dom";
+import {BrowserRouter, Routes, Route, Link, useLocation} from "react-router-dom";
 
 
 
 function App() {
-  const [data, setData] = useState([]);
-  const [error, setError] = useState(null);
-
-  useEffect(() =>{
-      axios.get('http://localhost:3001/members')
-      .then(response => {
-         setData(response.data);
-         console.log(data);
-      })
-      .catch(error => {
-        setError("Error")
-        if (error.response && error.response.status === 404) {
-          setError('404 - Not Found');
-        } else {
-          setError('Unable to fetch data from server');
-        }
-      });
-  }, []);
 
   return (
-    <>
+      
       <BrowserRouter>
+        <Header/>
         <Routes>
-          <Route path="/" element={<Home/>}/>
-          <Route path="/signup" element={<SignUp/>}/>
-          <Route path="/login" element={<Login/>}/>
+          <Route path="/" element={<Home />} />
+          <Route path="/profil" element={<Profil />} />
+          <Route path="/signup" element={<SignUp />} />
+          <Route path="/login" element={<Login token={Cookies.get('token')} />} />
         </Routes>
       </BrowserRouter>
-      
-    </>
     
   );
 }

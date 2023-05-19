@@ -1,8 +1,10 @@
 import * as React from 'react';
 import Cookies from 'js-cookie';
+import {decodeToken} from 'react-jwt';
 import axios from 'axios';  
-import { Navigate, Link } from "react-router-dom";
-import { useState, useEffect } from 'react';
+import { Navigate, Link , useNavigate} from "react-router-dom";
+import { useState, useEffect, useContext} from 'react';
+import { AuthContext } from '../components/AuthContext/AuthContext';
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -18,12 +20,13 @@ import Typography from '@mui/material/Typography';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import GlobalSnackbar from '../components/GlobalSnackBar/GlobalSnackbar';
 
+
 function Copyright(props) {
   return (
     <Typography variant="body2" color="text.secondary" align="center" {...props}>
       {'Copyright © '}
-      <Link color="inherit" href="https://mui.com/">
-        Your Website
+      <Link color="inherit" to='/'>
+        Unearth
       </Link>{' '}
       {new Date().getFullYear()}
       {'.'}
@@ -33,9 +36,9 @@ function Copyright(props) {
 
 const theme = createTheme();
 
-export default function SignInSide() {
-
-  const [connected, setConnected] = useState(false);
+export default function SignInSide({}) {
+  const {isAuthenticated, setIsAuthenticated} = useContext(AuthContext);
+  //const [connected, setConnected] = useState(false);
   const [snackBar, setSnackBar] = useState({
     open: false,
     severity:null,
@@ -80,9 +83,12 @@ export default function SignInSide() {
       password: data.get('password'),
     }).then(response => {
       const {token} = response.data;
+      const decodedToken = decodeToken(token);
+      const id_member = decodedToken.id_member;
       Cookies.set('token', token, {expires: 1, secure: true});
+      Cookies.set('id_member', id_member, {expires: 1, secure: true});
       console.log("Utilisateur connecté !");
-      setConnected(true);
+      setIsAuthenticated(true);
       
     }).catch(error => {
       setSnackBar({
@@ -94,13 +100,13 @@ export default function SignInSide() {
     });
   };
 
-  if (connected) {
-    return <Navigate to="/" />;
+  if (isAuthenticated) {
+    return <Navigate to="/"/>;
   }
 
   return (
     <ThemeProvider theme={theme}>
-      <GlobalSnackbar snackbar={snackBar} setSnackbar={setSnackBar}/>
+      <GlobalSnackbar snackbar={snackBar} setSnackbar={setSnackBar} vertical='bottom' horizontal= 'right'/>
       <Grid container component="main" sx={{ height: '100vh' }}>
         <CssBaseline />
         <Grid
