@@ -154,7 +154,7 @@ function Discover(){
     const [error, setError] = useState(null);
 
     useEffect(() =>{
-        axios.get('http://localhost:3001/genres')
+        axios.get('https://projet-web-back.onrender.com/genres')
         .then(response => {
             setData(response.data);
             console.log(data);
