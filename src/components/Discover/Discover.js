@@ -56,7 +56,7 @@ export default function Album() {
     useEffect(() => {
       const fetchData = async () => {
         try {
-          const response = await axios.get('http://localhost:3001/genres');
+          const response = await axios.get('https://projet-web-back.onrender.com/genres');
           setData(response.data);
           console.log(data);
           const imagePromises = response.data.map(item => getImage(item.genre_name));
