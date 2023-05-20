@@ -100,7 +100,7 @@ export default function Album() {
                           component="img"
                           sx={{
                             // 16:9
-                            pt: '56.25%',
+                            pt: '0%',
                           }}
                           //image={`./images/genres/${item.genre_name}.jpg`}
                           image={imageURLs[index]}
