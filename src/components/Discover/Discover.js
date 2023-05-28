@@ -66,6 +66,7 @@ export default function Album() {
         } catch (error) {
           setError("Error");
           if (error.response && error.response.status === 404) {
+            console.log("ICI");
             setError('404 - Not Found');
           } else {
             setError('Unable to fetch data from server');
@@ -83,8 +84,8 @@ export default function Album() {
     <ThemeProvider theme={theme}>
       <CssBaseline />
       <main>
-        <h1>TODO Genres</h1>
         <Container sx={{ py: 8 }} maxWidth="md">
+        <h1>Parcourez par genres</h1>
           <Grid container spacing={4}>
             {error ?  (
             <p>{error}</p>

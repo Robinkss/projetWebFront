@@ -94,7 +94,7 @@ export default function SignInSide({}) {
       setSnackBar({
         open: true,
         severity: "error",
-        message: "Tous les champs sont obligatoires !"
+        message: "Email ou mot de passe incorrect !"
       })
       console.log(error);
     });

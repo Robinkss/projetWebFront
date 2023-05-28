@@ -14,10 +14,11 @@ import Box from '@mui/material/Box';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
-import { Snackbar, Alert } from '@mui/material';
+import { Snackbar, Alert, Input, InputLabel } from '@mui/material';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import Login from './Login';
 import GlobalSnackbar from '../components/GlobalSnackBar/GlobalSnackbar';
+import { Label } from '@mui/icons-material';
 //import isemail from "isemail";
 
 
@@ -65,9 +66,11 @@ export default function SignUp() {
   const handleSubmit = (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
+    const imageFile = event.target['photo'].files[0];
     console.log({
       email: data.get('email'),
       password: data.get('password'),
+      imageFile: imageFile
     });
 
     //Vérification des champs vide
@@ -95,6 +98,7 @@ export default function SignUp() {
       name: data.get('pseudo'),
       password: data.get('password'),
       description: "",
+      photoInput: imageFile,
       photo: "test", 
       admin: false
     }).then(response => {
@@ -184,6 +188,16 @@ export default function SignUp() {
                   type="password"
                   id="passwordConfirm"
                   autoComplete="confirm new password"
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <InputLabel htmlFor="photo">Photo de profil (préférez des dimensions carrés)</InputLabel>
+                <Input
+                  type="file"
+                  label="Photo de profil"
+                  name="photo"
+                  id="photo"
+                  accept="image/*"
                 />
               </Grid>
             </Grid>

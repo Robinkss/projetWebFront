@@ -4,6 +4,9 @@ import {decodeToken} from 'react-jwt';
 import Cookies from 'js-cookie';
 import { Navigate, Link , useNavigate} from "react-router-dom";
 import { AuthContext } from '../components/AuthContext/AuthContext';
+import { Button } from '@mui/material';
+import styles from "./Profil.module.scss";
+import Upload from '../components/Upload/Upload';
 
 function Profil(){
     const {isAuthenticated, setIsAuthenticated} = useContext(AuthContext);
@@ -11,7 +14,12 @@ function Profil(){
     const [dataUser, setDataUser] = useState(null);
     const [token, setToken] = useState(Cookies.get('token'));
     const [isDeleted, setIsDeleted] = useState(false);
-    const [error, setError] = useState(null);
+    const [errorDataUser, setErrorDataUser] = useState(null);
+    const [errorSongs, setErrorSongs] = useState(null);
+    const [songs, setSongs] = useState(null);
+    const [image, setImage] = useState(null);
+    const [selectedButton, setSelectedButton] = useState(null);
+
 
     function handleDeleteAccount(){
         console.log('Token :');
@@ -30,6 +38,24 @@ function Profil(){
             console.log(error);
         });
     }
+
+    async function getImage(id_user){
+        try {
+            const response = await axios.get(`http://localhost:3001/members/image/${id_user}`, { responseType: 'arraybuffer' });
+            const image = new Blob([response.data], { type: 'image/png' });
+            const imageURL = URL.createObjectURL(image);
+            console.log(imageURL);
+            return imageURL;
+          } catch (error) {
+            console.log(error);
+            throw error;
+          }
+    }
+
+    async function handleSelectedButton(onglet){
+        setSelectedButton(onglet);
+
+    }
     
     useEffect(() => {
         
@@ -38,7 +64,6 @@ function Profil(){
                 const decodedToken = decodeToken(token);
                 const id_member = decodedToken.id_member;
                 setUser(id_member);
-                console.log('OUIIII');
             }catch(error){
                 console.error('Erreur lors du décodage du token :', error);
                 setUser(null);
@@ -50,6 +75,13 @@ function Profil(){
         
     }, [token]);
 
+    /*
+     * Récupération de toutes les données de l'utilisateur
+     - Données principales
+     - Données des chansons
+     - Données des albums
+     - Données des suivis
+    */
     useEffect(() => {
         const fetchData = async () => {
             try{
@@ -57,19 +89,42 @@ function Profil(){
                     const response = await axios.get(`http://localhost:3001/members/${user}`);
                     setDataUser(response.data);
                     console.log(response.data);
-                }else{
-                    console.log('PAS OUF');
+                    try{
+                        const imagePromise = getImage(response.data.id_member);
+                        const imageURL = await Promise.resolve(imagePromise);
+                        setImage(imageURL); 
+                    }catch(error){
+                        setImage(null);
+                    }
+                    
                 }
             }catch(error){
-                setError("Error");
+                setErrorDataUser("Error");
                 if (error.response && error.response.status === 404) {
-                    setError('404 - Not Found');
+                    setErrorDataUser('404 - Not Found');
                 } else {
-                    setError('Unable to fetch data from server');
+                    setErrorDataUser('Unable to fetch data from server');
                 }
             }
         };
+        const fetchSongs = async () => {
+            try{
+                if(user){
+                    const response = await axios.get(`http://localhost:3001/members/songs/${user}`);
+                    setSongs(response.data);
+                }
+            }catch(error){
+                setErrorSongs("Error");
+                if (error.response && error.response.status === 404) {
+                    setErrorSongs('404 - Not Found');
+                } else {
+                    setErrorSongs('Unable to fetch data from server');
+                }
+            }
+        };
+                    
         fetchData();
+        fetchSongs();
     }, [user]);
 
 
@@ -79,19 +134,82 @@ function Profil(){
     return (
         
         <body>
-            {error ?  (
-            <p>{error}</p>
-            ) : dataUser && (
-                <ul>
-                    <li>Pseudo : {dataUser.member_name}</li>
-                    <li>Mail : {dataUser.member_mail}</li>  
-                </ul>
-            )
-            
-            }
-            
-                
+            <div className={styles.container}>
+                <div className={styles.toolBar}>
+                    <div className={styles.imageContainer}>
+                        {image ? (
+                            <img className={styles.image} src={image} alt="profil"/>
+                        ) : (
+                            <img className={styles.image} src="./images/default_avatar.png" alt="profil"/>
+                        )}
+                             
+                    </div>                    
+                    <div className={styles.option} onClick={() =>handleSelectedButton("accountSettings")}>Mon compte</div>
+                    <div className={styles.option} onClick={() => handleSelectedButton("songs")}>Mes chansons</div>
+                    <div className={styles.option} onClick={() => handleSelectedButton("albums")}>Mes albums</div>
+                    <div className={styles.option} onClick={() => handleSelectedButton("upload")}>Upload</div>
+                    <div className={styles.option} onClick={() => handleSelectedButton("follows")}>Suivis</div>
 
+                </div>
+                <div className={styles.content}>
+                {(selectedButton === 'accountSettings' || selectedButton === null) && (
+                    <>
+                    <p>Mes informations :</p>
+                    {errorDataUser ?  (
+                        <p>{errorDataUser}</p>
+                    ) 
+                    : 
+                    dataUser && (
+                            <>
+                            <ul>
+                                <li>Pseudo : {dataUser.member_name}</li>
+                                <li>Mail : {dataUser.member_mail}</li>  
+                            </ul>
+                            <Button onClick={handleDeleteAccount}>
+                                Supprimer mon compte
+                            </Button>
+                            </>
+                            
+                    )}
+                    </>
+                )}
+                {selectedButton === 'songs' && (
+                    // Afficher les chansons
+                    
+                    <>
+                    <p>Mes chansons :</p>
+                    {errorSongs ?  (
+                        <p>{errorSongs}</p>
+                    ) : songs && (
+                        <ul>
+                        {songs && songs.map((song) => (
+                            <li key={song.id_song}>  
+                                {song.song_name}
+                            </li>
+                        ))}
+                        </ul>
+                    )}
+                    </>
+                )}
+                {selectedButton === 'albums' && (
+                    // Afficher les albums
+                    <p>Mes albums :</p>
+                )}
+                {selectedButton === 'upload' && (
+                    // Afficher les albums
+                    <Upload user={user} token={token}/>
+                )}
+                {selectedButton === 'follows' && (
+                    // Afficher les suivis
+                    <p>Mes suivis :</p>
+                )}
+                </div>
+            </div>
+
+            
+            
+            
+            
         </body>                                     
     );
 }
