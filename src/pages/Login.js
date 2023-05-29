@@ -37,7 +37,7 @@ function Copyright(props) {
 const theme = createTheme();
 
 export default function SignInSide({}) {
-  const {isAuthenticated, setIsAuthenticated} = useContext(AuthContext);
+  const {isAuthenticated, setIsAuthenticated, isAdmin, setIsAdmin} = useContext(AuthContext);
   //const [connected, setConnected] = useState(false);
   const [snackBar, setSnackBar] = useState({
     open: false,
@@ -89,6 +89,18 @@ export default function SignInSide({}) {
       Cookies.set('id_member', id_member, {expires: 1, secure: true});
       console.log("Utilisateur connecté !");
       setIsAuthenticated(true);
+      //On check si l'utilisateur est un admin
+      axios.get(`http://localhost:3001/members/${id_member}`).then(response => {
+        const {admin} = response.data;
+        console.log('admin :');
+        console.log(admin);
+        if(admin===true){
+          setIsAdmin(true);
+          Cookies.set('admin', true, {expires: 1, secure: true});
+        }
+      }).catch(error =>{
+        console.log("Impossible de récupérer les données de l'utilisateur !");
+      })
       
     }).catch(error => {
       setSnackBar({

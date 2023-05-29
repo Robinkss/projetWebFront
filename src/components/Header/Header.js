@@ -8,6 +8,7 @@ function Header() {
     //const [isConnected, setIsConnected] = useState(isConnect);
     const authCtx = useContext(AuthContext);
     const isConnected = authCtx.isAuthenticated;
+    const isAdmin = authCtx.isAdmin;
     const [toggleMenu, setToggleMenu] = useState(false);
     const [largeur, setLargeur] = useState(window.innerWidth);
     const navigate = useNavigate();
@@ -19,7 +20,9 @@ function Header() {
     function handleDeconnect(){
         Cookies.remove('token');
         Cookies.remove('id_member');
-        authCtx.setIsAuthenticated(false);
+        Cookies.remove('admin');
+        authCtx.setIsAuthenticated(false); 
+        authCtx.setIsAdmin(false);
         console.log('token supprimé');
         console.log(Cookies.get('token'));
     }
@@ -28,8 +31,11 @@ function Header() {
         
         if (Cookies.get('token') !== undefined){
             authCtx.setIsAuthenticated(true);
-        } 
-        
+        }
+
+        if (Cookies.get('admin') !== undefined && Cookies.get('admin') === 'true'){
+            authCtx.setIsAdmin(true);
+        }
 
         const changeWidth = () => {
             setLargeur(window.innerWidth);
@@ -57,6 +63,7 @@ function Header() {
                     <li className={styles.items}><Link to='/'>Home</Link></li>
                     {isConnected                   
                         ?<> <li className={styles.items}><Link to='/profil'>Mon profil</Link></li>
+                        {isAdmin && <li className={styles.items}><Link to='/admin'>Admin</Link></li>}
                         <li className={styles.items}><Link to='/' onClick={handleDeconnect}>Se déconnecter</Link></li></>
                         :
                         <>

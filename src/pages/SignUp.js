@@ -6,20 +6,16 @@ import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
 import TextField from '@mui/material/TextField';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import Checkbox from '@mui/material/Checkbox';
 //import Link from '@mui/material/Link';
 import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
-import { Snackbar, Alert, Input, InputLabel } from '@mui/material';
+import {  Input, InputLabel } from '@mui/material';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-import Login from './Login';
 import GlobalSnackbar from '../components/GlobalSnackBar/GlobalSnackbar';
-import { Label } from '@mui/icons-material';
-//import isemail from "isemail";
+
 
 
 function Copyright(props) {
@@ -74,7 +70,7 @@ export default function SignUp() {
     });
 
     //Vérification des champs vide
-    if(data.get("email")=="" || data.get("pseudo")== "" || data.get("password") == "" || data.get("passwordConfirm") == ""){
+    if(data.get("email")==="" || data.get("pseudo")=== "" || data.get("password") === "" || data.get("passwordConfirm") === ""){
       setSnackBar({
         open: true,
         severity: "warning",
@@ -84,7 +80,7 @@ export default function SignUp() {
     }
 
     //Vérification cohérence mot de passe
-    if(data.get("password")!=data.get("passwordConfirm")){
+    if(data.get("password")!==data.get("passwordConfirm")){
       setSnackBar({
         open: true,
         severity: "warning",
@@ -100,7 +96,6 @@ export default function SignUp() {
       description: "",
       photoInput: imageFile,
       photo: "test", 
-      admin: false
     }).then(response => {
       setSnackBar({
         open: true,

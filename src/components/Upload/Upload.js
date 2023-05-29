@@ -125,16 +125,16 @@ export default function Upload({user, token}) {
       const formDataFiles = new FormData();
 
       // Ajout de l'image
-      formDataFiles.append("songImage", songImage, `${songId}.jpg`);
+      formDataFiles.append("songImage", songImage, `${idSong}.jpg`);
 
       // Ajout de l'audio
-      formDataFiles.append("song", song, `${songId}.mp3`);
+      formDataFiles.append("song", song, `${idSong}.mp3`);
 
       console.log("formDataFiles : ");
       console.log(formDataFiles.get("songImage"));
       console.log(formDataFiles.get("song"));
       // Envoi de l'image et de l'audio
-      axios.post(`http://localhost:3001/songs/upload/${songId}`, formDataFiles, {
+      axios.post(`http://localhost:3001/songs/upload/${idSong}`, formDataFiles, {
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "multipart/form-data"
@@ -142,6 +142,11 @@ export default function Upload({user, token}) {
       }).then(response => {
         // Succès de l'envoi de l'image et de l'audio
         console.log("Succès de l'envoi de l'image et de l'audio");
+        setSnackBar({
+          open: true,
+          severity: "success",
+          message: "Musique ajoutée avec succès !"
+        })
       }).catch(error => {
         console.log("Erreur lors de l'envoi de l'image et/ou de l'audio");
         // Erreur lors de l'envoi de l'image et/ou de l'audio
@@ -161,8 +166,9 @@ export default function Upload({user, token}) {
   
 
   return (
-    <ThemeProvider theme={theme}>
+    <ThemeProvider theme={theme}>  
       <Container component="main" maxWidth="xs">
+      <GlobalSnackbar snackbar={snackBar} setSnackbar={setSnackBar} vertical='bottom' horizontal='right' />
         <CssBaseline />
         <Box
           sx={{

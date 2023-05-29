@@ -7,13 +7,13 @@ import { AuthContext } from '../components/AuthContext/AuthContext';
 import { Button } from '@mui/material';
 import styles from "./Profil.module.scss";
 import Upload from '../components/Upload/Upload';
+import AccountSettings from '../components/AccountSettings/AccountSettings';
+import AccountSongs from '../components/AccountSongs/AccountSongs';
 
 function Profil(){
-    const {isAuthenticated, setIsAuthenticated} = useContext(AuthContext);
     const [user, setUser] = useState(null);
-    const [dataUser, setDataUser] = useState(null);
     const [token, setToken] = useState(Cookies.get('token'));
-    const [isDeleted, setIsDeleted] = useState(false);
+    const [dataUser, setDataUser] = useState(null);
     const [errorDataUser, setErrorDataUser] = useState(null);
     const [errorSongs, setErrorSongs] = useState(null);
     const [songs, setSongs] = useState(null);
@@ -21,23 +21,6 @@ function Profil(){
     const [selectedButton, setSelectedButton] = useState(null);
 
 
-    function handleDeleteAccount(){
-        console.log('Token :');
-        console.log(token);
-        axios.delete(`http://localhost:3001/members/delete/${user}`, {
-            headers: {
-                Authorization: `Bearer ${token}`,
-            },
-        }).then(response => {
-            console.log("Compte supprimé !");
-            Cookies.remove('token');
-            Cookies.remove('id_member');
-            setIsAuthenticated(false);
-            setIsDeleted(true); 
-        }).catch(error => {
-            console.log(error);
-        });
-    }
 
     async function getImage(id_user){
         try {
@@ -128,9 +111,6 @@ function Profil(){
     }, [user]);
 
 
-    if(isDeleted){
-        return <Navigate to="/signup" />
-    }
     return (
         
         <body>
@@ -153,43 +133,11 @@ function Profil(){
                 </div>
                 <div className={styles.content}>
                 {(selectedButton === 'accountSettings' || selectedButton === null) && (
-                    <>
-                    <p>Mes informations :</p>
-                    {errorDataUser ?  (
-                        <p>{errorDataUser}</p>
-                    ) 
-                    : 
-                    dataUser && (
-                            <>
-                            <ul>
-                                <li>Pseudo : {dataUser.member_name}</li>
-                                <li>Mail : {dataUser.member_mail}</li>  
-                            </ul>
-                            <Button onClick={handleDeleteAccount}>
-                                Supprimer mon compte
-                            </Button>
-                            </>
-                            
-                    )}
-                    </>
+                    <AccountSettings user={user} token={token}/>
                 )}
                 {selectedButton === 'songs' && (
                     // Afficher les chansons
-                    
-                    <>
-                    <p>Mes chansons :</p>
-                    {errorSongs ?  (
-                        <p>{errorSongs}</p>
-                    ) : songs && (
-                        <ul>
-                        {songs && songs.map((song) => (
-                            <li key={song.id_song}>  
-                                {song.song_name}
-                            </li>
-                        ))}
-                        </ul>
-                    )}
-                    </>
+                    <AccountSongs user={user} token={token}/>
                 )}
                 {selectedButton === 'albums' && (
                     // Afficher les albums

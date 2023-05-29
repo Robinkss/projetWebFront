@@ -6,6 +6,7 @@ import Header from './components/Header/Header';
 import Home from './pages/Home';
 import SignUp from './pages/SignUp';
 import Login from './pages/Login';
+import Admin from './pages/Admin/Admin';
 import Profil from './pages/Profil';
 import Cookies from 'js-cookie';
 import './App.scss';
@@ -22,6 +23,7 @@ function App() {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/profil" element={<Profil />} />
+          <Route path="/admin" element={<Admin />} />
           <Route path="/signup" element={<SignUp />} />
           <Route path="/login" element={<Login token={Cookies.get('token')} />} />
         </Routes>
