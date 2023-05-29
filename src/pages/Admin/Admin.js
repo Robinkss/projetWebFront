@@ -17,7 +17,7 @@ function Admin(){
       });
 
     function handleBanUser(userId){
-        axios.delete(`http://localhost:3001/members/delete/${userId}`, {
+        axios.delete(`https://projet-web-back.onrender.com/members/delete/${userId}`, {
             headers: {
                 Authorization: `Bearer ${token}`,
             },
@@ -54,7 +54,7 @@ function Admin(){
     useEffect(() => {
         const fetchUsers = async () => {
             try {
-                const response = await axios.get('http://localhost:3001/members');
+                const response = await axios.get('https://projet-web-back.onrender.com/members');
                 setUsers(response.data);
             } catch (error) {
                 console.log(error);

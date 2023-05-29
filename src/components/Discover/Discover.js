@@ -40,7 +40,7 @@ export default function Album() {
     
     async function getImage(genre_name) {
       try {
-        const response = await axios.get(`http://localhost:3001/genres/image/${genre_name}`, { responseType: 'arraybuffer' });
+        const response = await axios.get(`https://projet-web-back.onrender.com/genres/image/${genre_name}`, { responseType: 'arraybuffer' });
         const image = new Blob([response.data], { type: 'image/jpeg' });
         const imageURL = URL.createObjectURL(image);
         console.log(imageURL);
@@ -56,7 +56,7 @@ export default function Album() {
     useEffect(() => {
       const fetchData = async () => {
         try {
-          const response = await axios.get('http://localhost:3001/genres');
+          const response = await axios.get('https://projet-web-back.onrender.com/genres');
           setData(response.data);
           console.log(data);
           const imagePromises = response.data.map(item => getImage(item.genre_name));

@@ -75,7 +75,7 @@ export default function AccountSettings({user, token}) {
     function handleDeleteAccount(){
         console.log('Token :');
         console.log(token);
-        axios.delete(`http://localhost:3001/members/delete/${user}`, {
+        axios.delete(`https://projet-web-back.onrender.com/members/delete/${user}`, {
             headers: {
                 Authorization: `Bearer ${token}`,
             },
@@ -95,7 +95,7 @@ export default function AccountSettings({user, token}) {
             try{
                 if(user){
                     
-                    const response = await axios.get(`http://localhost:3001/members/${user}`);
+                    const response = await axios.get(`https://projet-web-back.onrender.com/members/${user}`);
                     
                     setDataUser(response.data);
                     console.log("response.data :");

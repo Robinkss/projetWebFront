@@ -17,7 +17,7 @@ function AccountSongs({user, token}){
         const fetchSongs = async () => {
             try{
                 if(user){
-                    const response = await axios.get(`http://localhost:3001/members/songs/${user}`);
+                    const response = await axios.get(`https://projet-web-back.onrender.com/members/songs/${user}`);
                     setSongs(response.data);
                 }
             }catch(error){
@@ -42,9 +42,9 @@ function AccountSongs({user, token}){
                     {songs ? (
                         songs.map((song) => (
                             <div className={styles.musique}>
-                                <img src={`http://localhost:3001/images/songs/${song.id_song}.jpg`} alt="Photo de profil"/>
+                                <img src={`https://projet-web-back.onrender.com/images/songs/${song.id_song}.jpg`} alt="Photo de profil"/>
                                 <p className={styles.titre}>{song.song_name}</p>
-                                <audio controls src={`http://localhost:3001/songs/${song.id_song}.mp3`}>
+                                <audio controls src={`https://projet-web-back.onrender.com/songs/${song.id_song}.mp3`}>
                                 </audio>
                                 
                             </div>
