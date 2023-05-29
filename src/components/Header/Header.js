@@ -4,8 +4,10 @@ import styles from "./Header.module.scss";
 import { AuthContext } from '../AuthContext/AuthContext';
 import Cookies from 'js-cookie';
 
+
 function Header() {
     //const [isConnected, setIsConnected] = useState(isConnect);
+    const logoPath = process.env.REACT_APP_PUBLIC_URL + '/images/logo.png';
     const authCtx = useContext(AuthContext);
     const isConnected = authCtx.isAuthenticated;
     const isAdmin = authCtx.isAdmin;
@@ -21,7 +23,7 @@ function Header() {
         Cookies.remove('token');
         Cookies.remove('id_member');
         Cookies.remove('admin');
-        authCtx.setIsAuthenticated(false); 
+        authCtx.setIsAuthenticated(false);  
         authCtx.setIsAdmin(false);
         console.log('token supprimé');
         console.log(Cookies.get('token'));
@@ -55,7 +57,7 @@ function Header() {
     return (
         <nav>
             <div className={styles.unearth}>
-                <img alt='Logo  Unearth' src='./images/logo.png'/>
+                <img alt='Logo  Unearth' src={logoPath}/>
                 <h1>Unearth</h1>
             </div>    
             {(toggleMenu || largeur > 500) && (

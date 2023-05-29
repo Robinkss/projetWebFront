@@ -11,9 +11,10 @@ import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
-import Link from '@mui/material/Link';
+//import Link from '@mui/material/Link';
 import CircularProgress from '@mui/material/CircularProgress';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
+import { Link } from "react-router-dom";
 
 function Copyright() {
   return (
@@ -31,7 +32,7 @@ function Copyright() {
 
 const theme = createTheme();
 
-export default function Album() {
+export default function Discover() {
 
     const [data, setData] = useState([]);
     const [error, setError] = useState(null);
@@ -40,7 +41,7 @@ export default function Album() {
     
     async function getImage(genre_name) {
       try {
-        const response = await axios.get(`http://localhost:3001/genres/image/${genre_name}`, { responseType: 'arraybuffer' });
+        const response = await axios.get(`${process.env.REACT_APP_API_URL}/genres/image/${genre_name}`, { responseType: 'arraybuffer' });
         const image = new Blob([response.data], { type: 'image/jpeg' });
         const imageURL = URL.createObjectURL(image);
         console.log(imageURL);
@@ -56,7 +57,8 @@ export default function Album() {
     useEffect(() => {
       const fetchData = async () => {
         try {
-          const response = await axios.get('http://localhost:3001/genres');
+          const response = await axios.get(`${process.env.REACT_APP_API_URL}/genres`);
+          
           setData(response.data);
           console.log(data);
           const imagePromises = response.data.map(item => getImage(item.genre_name));
@@ -119,7 +121,7 @@ export default function Album() {
                           </Typography>
                         </CardContent>
                         <CardActions>
-                          <Button size="small">Parcourir</Button>
+                          <Button size="small"><Link to={`/${item.id_genre}`} state={{ genre: item }}>Parcourir</Link></Button>
                         </CardActions>
                       </Card>
                     </Grid>
@@ -150,38 +152,5 @@ export default function Album() {
   );
 }
 
-function Discover(){
-    const [data, setData] = useState([]);
-    const [error, setError] = useState(null);
 
-    useEffect(() =>{
-        axios.get('http://localhost:3001/genres')
-        .then(response => {
-            setData(response.data);
-            console.log(data);
-        })
-        .catch(error => {
-            setError("Error")
-            if (error.response && error.response.status === 404) {
-            setError('404 - Not Found');
-            } else {
-            setError('Unable to fetch data from server');
-            }
-        });
-    }, []);
-    return (
-        <div className={styles.container}>
-            {error ? (
-            <p>{error}</p>
-            ) : (
-            data.map(item => (
-                <p key={item.id_genre}>{item.genre_name}</p>
-            ))
-            )}
-      </div>
-            
-        
-        
-    );
-}
 

@@ -8,9 +8,14 @@ import SignUp from './pages/SignUp';
 import Login from './pages/Login';
 import Admin from './pages/Admin/Admin';
 import Profil from './pages/Profil';
+import Artiste from './pages/Artiste/Artiste';
+import Discover from './pages/Discover/Discover';
+import SongsByGenre from './pages/SongsByGenre/SongsByGenre';
+
 import Cookies from 'js-cookie';
 import './App.scss';
 import {BrowserRouter, Routes, Route, Link, useLocation} from "react-router-dom";
+
 
 
 
@@ -21,7 +26,9 @@ function App() {
       <BrowserRouter>
         <Header/>
         <Routes>
-          <Route path="/" element={<Home />} />
+          <Route path="/" element={<Discover />} />
+          <Route path="/:genre" element={<SongsByGenre />} />
+          <Route path="/artiste/:artiste" element={<Artiste />} />
           <Route path="/profil" element={<Profil />} />
           <Route path="/admin" element={<Admin />} />
           <Route path="/signup" element={<SignUp />} />

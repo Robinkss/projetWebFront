@@ -75,7 +75,7 @@ export default function AccountSettings({user, token}) {
     function handleDeleteAccount(){
         console.log('Token :');
         console.log(token);
-        axios.delete(`http://localhost:3001/members/delete/${user}`, {
+        axios.delete(`${process.env.REACT_APP_API_URL}/members/delete/${user}`, {
             headers: {
                 Authorization: `Bearer ${token}`,
             },
@@ -95,7 +95,7 @@ export default function AccountSettings({user, token}) {
             try{
                 if(user){
                     
-                    const response = await axios.get(`http://localhost:3001/members/${user}`);
+                    const response = await axios.get(`${process.env.REACT_APP_API_URL}/members/${user}`);
                     
                     setDataUser(response.data);
                     console.log("response.data :");

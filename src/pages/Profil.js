@@ -24,7 +24,7 @@ function Profil(){
 
     async function getImage(id_user){
         try {
-            const response = await axios.get(`http://localhost:3001/members/image/${id_user}`, { responseType: 'arraybuffer' });
+            const response = await axios.get(`${process.env.REACT_APP_API_URL}/members/image/${id_user}`, { responseType: 'arraybuffer' });
             const image = new Blob([response.data], { type: 'image/png' });
             const imageURL = URL.createObjectURL(image);
             console.log(imageURL);
@@ -69,7 +69,7 @@ function Profil(){
         const fetchData = async () => {
             try{
                 if(user){
-                    const response = await axios.get(`http://localhost:3001/members/${user}`);
+                    const response = await axios.get(`${process.env.REACT_APP_API_URL}/members/${user}`);
                     setDataUser(response.data);
                     console.log(response.data);
                     try{
@@ -93,7 +93,7 @@ function Profil(){
         const fetchSongs = async () => {
             try{
                 if(user){
-                    const response = await axios.get(`http://localhost:3001/members/songs/${user}`);
+                    const response = await axios.get(`${process.env.REACT_APP_API_URL}/members/songs/${user}`);
                     setSongs(response.data);
                 }
             }catch(error){

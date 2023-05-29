@@ -1,0 +1,61 @@
+
+
+.mainContainer{
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    width: auto;
+    height: 100%;
+    h1{
+        width: 100%;
+        text-align: center;
+        color: #0e7490;
+    }
+    .musiques{
+        display: flex;
+        align-items: center;
+        flex-direction: column;
+        width: 90%;
+        height: 500px;
+        overflow: auto;
+        box-shadow: 10px 10px 5px #0e7490;
+        //border: 1px solid black;
+        .musique{
+            display: flex;
+            flex-wrap: nowrap;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            border-bottom: 3px solid #0e7490;
+            min-height: 100px;
+            img{
+                width: 75px;
+                height: 75px;
+                border-radius: 50%;
+                
+            }
+            .name{
+                width: auto;
+                padding-left: 5%;
+                Link{
+                    color: #0e7490;
+                }
+            }
+            .hyphen{
+                padding-left: 2px;
+                padding-right: 2px;
+            }
+            .titre{
+                width: auto;
+                padding-right: 5%;
+            }
+            audio{
+                width: 30%;
+            }
+        }
+        .musique:last-child{
+            border-bottom: none;
+        }
+    }
+}

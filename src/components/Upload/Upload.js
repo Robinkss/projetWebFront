@@ -45,7 +45,7 @@ export default function Upload({user, token}) {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get('http://localhost:3001/genres');
+        const response = await axios.get(`${process.env.REACT_APP_API_URL}/genres`);
         setGenres(response.data);
       } catch (error) {
         setError("Error");
@@ -104,7 +104,7 @@ export default function Upload({user, token}) {
     console.log("songImage : " + formData.get("songImage"));
     console.log("song : " + formData.get("song"));
 
-    axios.post('http://localhost:3001/songs/create', {
+    axios.post(`${process.env.REACT_APP_API_URL}/songs/create`, {
       songName: formData.get("songName"),
       genre: parseInt(formData.get("genre")),
       id_member: user,
@@ -134,7 +134,7 @@ export default function Upload({user, token}) {
       console.log(formDataFiles.get("songImage"));
       console.log(formDataFiles.get("song"));
       // Envoi de l'image et de l'audio
-      axios.post(`http://localhost:3001/songs/upload/${idSong}`, formDataFiles, {
+      axios.post(`${process.env.REACT_APP_API_URL}/songs/upload/${idSong}`, formDataFiles, {
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "multipart/form-data"

@@ -89,7 +89,7 @@ export default function SignUp() {
       return;
     }
 
-    axios.post('http://localhost:3001/members/signup', {
+    axios.post(`${process.env.REACT_APP_API_URL}/members/signup`, {
       mail: data.get('email'), 
       name: data.get('pseudo'),
       password: data.get('password'),
