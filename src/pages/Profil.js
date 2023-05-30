@@ -25,11 +25,12 @@ function Profil(){
 
     async function getImage(id_user){
         try {
-            const response = await axios.get(`${process.env.REACT_APP_API_URL}/members/image/${id_user}`, { responseType: 'arraybuffer' });
+            const image = process.env.REACT_APP_API_URL + `/images/members/${id_user}.jpg`;
+            /* const response = await axios.get(`${process.env.REACT_APP_API_URL}/members/image/${id_user}`, { responseType: 'arraybuffer' });
             const image = new Blob([response.data], { type: 'image/png' });
             const imageURL = URL.createObjectURL(image);
-            console.log(imageURL);
-            return imageURL;
+            console.log(imageURL); */
+            return image;
           } catch (error) {
             console.log(error);
             throw error;

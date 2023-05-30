@@ -17,6 +17,7 @@ function Artiste(){
     const user = location.state.user;
     const [isFollowed, setIsFollowed] = useState(false);
     const [isYourself, setIsYourself] = useState(false);
+    const [isConnected, setIsConnected] = useState(false);
     console.log("user");
     console.log(user);
 
@@ -43,28 +44,43 @@ function Artiste(){
       }, [snackBar]);
 
     const handleFollow = () => {
-        console.log("follow");
-        const token = Cookies.get('token');
-        const decodedToken = decodeToken(token);
-        const id_member = decodedToken.id_member;
-        console.log("token");
-        console.log(token);
+        if(!isConnected){
+            setSnackBar({
+                open: true,
+                severity:'error',
+                message: "Vous devez être connecté pour suivre un artiste"
+            });
+        }
+        try{
+            console.log("follow");
+            const token = Cookies.get('token');
+            const decodedToken = decodeToken(token);
+            const id_member = decodedToken.id_member;
+            console.log("token");
+            console.log(token);
+            axios.post(`${process.env.REACT_APP_API_URL}/members/follow`, {
+                userId: id_member,
+                idFollowed: user,
+                },{
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                }
+                    
+              }).then(response => {
+                console.log(response);
+                setIsFollowed(true); 
+            }).catch(error => {
+                console.log(error);
+            });
+        }catch(error){
+            setSnackBar({
+                open: true,
+                severity:'error',
+                message: "Vous devez être connecté pour suivre un artiste"
+            });
+        }
 
 
-        axios.post(`${process.env.REACT_APP_API_URL}/members/follow`, {
-            userId: id_member,
-            idFollowed: user,
-            },{
-            headers: {
-                Authorization: `Bearer ${token}`,
-            }
-                
-          }).then(response => {
-            console.log(response);
-            setIsFollowed(true); 
-        }).catch(error => {
-            console.log(error);
-        });
     }
 
     const handleUnFollow = () => {
@@ -89,14 +105,19 @@ function Artiste(){
     }
 
     useEffect(() => {
+        console.log("user :"+user);
         if(user){
-            const token = Cookies.get('token');
-            const decodedToken = decodeToken(token);
-            const id_member = decodedToken.id_member;
-            if(id_member === user){
-                setIsYourself(true);
+            console.log("KEGJISGRIGGRIYIGGIRGIEYGIY");
+            try{
+                const token = Cookies.get('token');
+                const decodedToken = decodeToken(token);
+                const id_member = decodedToken.id_member;
+            }catch(error){    
+                setIsConnected(false);        
             }
-        }
+        }   
+            
+
 
         const fetchSongs = async () => {
             try{
@@ -134,25 +155,29 @@ function Artiste(){
         const fetchIsFollowed = async () => {
             try{
                 if(user){
-
-                    const token = Cookies.get('token');
-                    const decodedToken = decodeToken(token);
-                    const id_member = decodedToken.id_member;
-                    const response = await axios.get(`${process.env.REACT_APP_API_URL}/members/isFollow/${id_member}/${user}`,{
-                        headers: {
-                            Authorization: `Bearer ${token}`,
-                        },
-                    }).then(response => {
-                        if(response.data === true){
-                            console.log("true");
-                            setIsFollowed(true);
-                        }else{
-                            console.log("false");
-                            setIsFollowed(false);
-                        }
-                    }).catch(error => {
-                        console.log(error);
-                    });
+                    try{
+                        const token = Cookies.get('token');
+                        const decodedToken = decodeToken(token);
+                        const id_member = decodedToken.id_member;
+                        const response = await axios.get(`${process.env.REACT_APP_API_URL}/members/isFollow/${id_member}/${user}`,{
+                            headers: {
+                                Authorization: `Bearer ${token}`,
+                            },
+                        }).then(response => {
+                            if(response.data === true){
+                                console.log("true");
+                                setIsFollowed(true);
+                            }else{
+                                console.log("false");
+                                setIsFollowed(false);
+                            }
+                        }).catch(error => {
+                            console.log(error);
+                        });
+                    }catch(error){
+                        setIsConnected(false);
+                    }
+                    
                 }
             }catch(error){
                 console.log(error);

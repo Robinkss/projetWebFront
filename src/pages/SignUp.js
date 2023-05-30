@@ -42,6 +42,8 @@ export default function SignUp() {
   });
 
   const [isSignUp, setIsSignUp] = useState(false);
+  const [idImage, setIdImage] = useState(null);
+  const [userImage, setUserImage] = useState(null);
 
   useEffect(() => {
     if (snackBar.open) {
@@ -57,6 +59,12 @@ export default function SignUp() {
       };
     }
   }, [snackBar]);
+
+  const handleFileChange = (event) => {
+    const file = event.target.files[0];
+    // Faites quelque chose avec le fichier, par exemple l'enregistrer dans le state songImage
+    setUserImage(file);
+  };
   
 
   const handleSubmit = (event) => {
@@ -97,6 +105,33 @@ export default function SignUp() {
       photoInput: imageFile,
       photo: "test", 
     }).then(response => {
+      const newMember = response.data.newMember;
+      const idImage = newMember.id_member;
+      setIdImage(idImage);
+      // Envoi de l'image
+
+
+      const formDataFiles = new FormData();
+
+      // Ajout de l'image
+      formDataFiles.append("userImage", userImage, `${idImage}.jpg`);
+
+
+      console.log("formDataFiles : ");
+      console.log(formDataFiles.get("songImage"));
+      // Envoi de l'image et de l'audio
+      axios.post(`${process.env.REACT_APP_API_URL}/members/image/upload/${idImage}`, formDataFiles).then(response => {
+        // Succès de l'envoi de l'image et de l'audio
+        console.log("Succès de l'envoi de l'image et de l'audio");
+        setSnackBar({
+          open: true,
+          severity: "success",
+          message: "Musique ajoutée avec succès !"
+        })
+      }).catch(error => {
+        console.log("Erreur lors de l'envoi de l'image et/ou de l'audio");
+        // Erreur lors de l'envoi de l'image et/ou de l'audio
+      });
       setSnackBar({
         open: true,
         severity: response.data.severity,
@@ -193,6 +228,7 @@ export default function SignUp() {
                   name="photo"
                   id="photo"
                   accept="image/*"
+                  onChange={handleFileChange}
                 />
               </Grid>
             </Grid>
