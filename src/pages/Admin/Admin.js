@@ -17,21 +17,24 @@ function Admin(){
       });
 
     function handleBanUser(userId){
-        axios.delete(`${process.env.REACT_APP_API_URL}/members/delete/${userId}`, {
-            headers: {
-                Authorization: `Bearer ${token}`,
-            },
-        }).then(response => {
-            console.log("Membre banni !");
-            users.filter(user => user.id_member !== userId);
-            setSnackBar({
-                open: true,
-                severity: "success",
-                message: `Le membre numéro ${userId} a bien été banni !`
-              })
-        }).catch(error => {
-            console.log(error);
-        });
+        if(Cookies.get('admin') !== undefined && Cookies.get('admin') === 'true' ){
+
+            axios.delete(`${process.env.REACT_APP_API_URL}/members/delete/${userId}`, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            }).then(response => {
+                console.log("Membre banni !");
+                users.filter(user => user.id_member !== userId);
+                setSnackBar({
+                    open: true,
+                    severity: "success",
+                    message: `Le membre numéro ${userId} a bien été banni !`
+                })
+            }).catch(error => {
+                console.log(error);
+            });
+        }
     }
 
     // Evénement qui permet de fermer le snackbar
@@ -62,6 +65,10 @@ function Admin(){
         };
         fetchUsers();
     }, [users]);
+
+    if(Cookies.get('admin') !== 'true' || Cookies.get('admin') === undefined){
+        window.location.href = '/';
+    }
     
     return (
         

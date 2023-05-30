@@ -9,6 +9,7 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
 import Cookies from 'js-cookie';
 import styles from "./AccountSettings.module.scss";
 import { Label } from '@mui/icons-material';
+import GlobalSnackbar from '../../components/GlobalSnackBar/GlobalSnackbar';
 
 export default function AccountSettings({user, token}) {
     const [dataUser, setDataUser] = useState(null);
@@ -24,13 +25,120 @@ export default function AccountSettings({user, token}) {
     const [isEmailActive, setIsEmailActive] = useState(false);
     const [isPasswordActive, setIsPasswordActive] = useState(false);
     const [isDescriptionActive, setIsDescriptionActive] = useState(false);
-
-
+    const [snackBar, setSnackBar] = useState({
+        open: false,
+        severity:null,
+        message: null
+      });
 
 
     function handleChangePseudo(event){
         setPseudo(event.target.value);
     }
+
+    // Evénement qui permet de fermer le snackbar
+    useEffect(() => {
+        if (snackBar.open) {
+          const timer = setTimeout(() => {
+            setSnackBar((prevSnackBar) => ({
+              ...prevSnackBar,
+              open: false
+            }));
+          }, 4000);
+      
+          return () => {
+            clearTimeout(timer);
+          };
+        }
+      }, [snackBar]);
+
+    function updatePseudo(){
+        axios.put(`${process.env.REACT_APP_API_URL}/members/updateName/`, {
+            id: user,
+            name: pseudo,
+            },{
+            headers: {
+                Authorization: `Bearer ${token}`,
+            }
+                
+          }).then(response => {
+            setIsPseudoActive(false);
+            setSnackBar({
+                open: true,
+                severity: "success",
+                message: `Pseudo modifié !`
+            })
+
+            console.log(response);
+        }).catch(error => {
+            console.log(error);
+        });
+    }
+
+    function updateMail(){
+        axios.put(`${process.env.REACT_APP_API_URL}/members/updateMail/`, {
+            id: user,
+            mail: email,
+            },{
+            headers: {
+                Authorization: `Bearer ${token}`,
+            }
+                
+          }).then(response => {
+            setIsEmailActive(false);
+            setSnackBar({
+                open: true,
+                severity: "success",
+                message: `Email modifié !`
+            })
+            console.log(response);
+        }).catch(error => {
+            console.log(error);
+        });
+    }
+
+    function updatePassword(){
+        axios.put(`${process.env.REACT_APP_API_URL}/members/updatePassword/`, {
+            id: user,
+            password: password,
+            },{
+            headers: {
+                Authorization: `Bearer ${token}`,
+            }
+        }).then(response => {
+            setIsPasswordActive(false);
+            setSnackBar({
+                open: true,
+                severity: "success",
+                message: `Mot de passe modifié !`
+            })
+            console.log(response);
+        }).catch(error => {
+            console.log(error);
+        });
+    }
+
+    function updateDescription(){
+        axios.put(`${process.env.REACT_APP_API_URL}/members/updateDescription/`, {
+            id: user,
+            description: description,
+            },{
+            headers: {
+                Authorization: `Bearer ${token}`,
+            }
+        }).then(response => {
+            setIsDescriptionActive(false);
+            setSnackBar({
+                open: true,
+                severity: "success",
+                message: `Description modifiée !`
+            })
+            console.log(response);
+        }).catch(error => {
+            console.log(error);
+        });
+    }
+
 
     function handleChangeMail(event){
         setEmail(event.target.value);
@@ -130,31 +238,32 @@ export default function AccountSettings({user, token}) {
         : 
         dataUser && (
                 <div className={styles.container}>
+                    <GlobalSnackbar snackbar={snackBar} setSnackbar={setSnackBar} vertical='bottom' horizontal='left' />
                     <div className={styles.title}>Mes informations personnelles :</div>
                     <div className={styles.datas}>
                         <div className={styles.row}>
                             <label className={styles.label} htmlFor="pseudo">Pseudo :</label>
                             <input className={styles.input} onChange={handleChangePseudo} type="text" id="pseudo" name="pseudo" disabled={!isPseudoActive} value={pseudo} />
                             <Button onClick={setIsPseudoActiveTrue} ><img className={styles.edit} src='./images/edit.png' alt="Edit" /></Button>
-                            <Button hidden={!isPseudoActive} ><img hidden={!isPseudoActive} className={styles.edit} src='./images/submit.png' alt="Edit" /></Button>
+                            <Button hidden={!isPseudoActive} onClick={()=> updatePseudo() } ><img hidden={!isPseudoActive} className={styles.edit} src='./images/submit.png' alt="Edit" /></Button>
                         </div>
                         <div className={styles.row}>
                             <label className={styles.label} htmlFor="email">Email :</label>
                             <input className={styles.input} onChange={handleChangeMail} type="text" id="email" name="email" disabled={!isEmailActive} value={email} />
                             <Button onClick={setIsEmailActiveTrue} ><img className={styles.edit} src='./images/edit.png' alt="Edit" /></Button>
-                            <Button hidden={!isEmailActive} ><img hidden={!isEmailActive} className={styles.edit} src='./images/submit.png' alt="Edit" /></Button>
+                            <Button hidden={!isEmailActive} onClick={()=>updateMail()} ><img hidden={!isEmailActive} className={styles.edit} src='./images/submit.png' alt="Edit" /></Button>
                         </div>
                         <div className={styles.row}>
                             <label className={styles.label} htmlFor="password">Mot de passe :</label>
                             <input className={styles.input} onChange={handleChangePassword} type="password" id="password" name="password" disabled={!isPasswordActive} value={password} />
                             <Button onClick={setIsPasswordActiveTrue} ><img className={styles.edit} src='./images/edit.png' alt="Edit" /></Button>
-                            <Button hidden={!isPasswordActive} ><img hidden={!isPasswordActive} className={styles.edit} src='./images/submit.png' alt="Edit" /></Button>
+                            <Button hidden={!isPasswordActive} onClick={()=>updatePassword()} ><img hidden={!isPasswordActive} className={styles.edit} src='./images/submit.png' alt="Edit" /></Button>
                         </div>
                         <div className={styles.row}>
                             <label className={styles.label} htmlFor="desc">Description :</label>
                             <textarea className={styles.input} onChange={handleChangeDesc} id="desc" name="desc" disabled={!isDescriptionActive} value={description} />
                             <Button onClick={setIsDescriptionActiveTrue} ><img className={styles.edit} src='./images/edit.png' alt="Edit" /></Button>
-                            <Button hidden={!isDescriptionActive} ><img hidden={!isDescriptionActive} className={styles.edit} src='./images/submit.png' alt="Edit" /></Button>
+                            <Button hidden={!isDescriptionActive} onClick={()=> updateDescription()} ><img hidden={!isDescriptionActive} className={styles.edit} src='./images/submit.png' alt="Edit" /></Button>
                         </div>
                         <Button onClick={handleDeleteAccount} color='error' variant='outlined'>
                             Supprimer mon compte

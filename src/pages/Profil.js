@@ -9,6 +9,7 @@ import styles from "./Profil.module.scss";
 import Upload from '../components/Upload/Upload';
 import AccountSettings from '../components/AccountSettings/AccountSettings';
 import AccountSongs from '../components/AccountSongs/AccountSongs';
+import Follows from '../components/Follows/Follows';
 
 function Profil(){
     const [user, setUser] = useState(null);
@@ -141,7 +142,7 @@ function Profil(){
                 )}
                 {selectedButton === 'albums' && (
                     // Afficher les albums
-                    <p>Mes albums :</p>
+                    <p>Prochainement...</p>
                 )}
                 {selectedButton === 'upload' && (
                     // Afficher les albums
@@ -149,7 +150,7 @@ function Profil(){
                 )}
                 {selectedButton === 'follows' && (
                     // Afficher les suivis
-                    <p>Mes suivis :</p>
+                    <Follows user={user} token={token}/>
                 )}
                 </div>
             </div>
