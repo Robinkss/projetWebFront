@@ -7,12 +7,26 @@ import { Button } from '@mui/material';
 function AccountSongs({user, token}){
     const [songs, setSongs] = useState(null);
     const [errorSongs, setErrorSongs] = useState(null);
+    const [imageURLs, setImageURLs] = useState([]);
 
     const [snackBar, setSnackBar] = useState({
         open: false,
         severity:null,
         message: null
       });
+
+    async function getImageSong(id_song) {
+    try {
+        const response = await axios.get(`${process.env.REACT_APP_API_URL}/songs/image/${id_song}`, { responseType: 'arraybuffer' });
+        const image = new Blob([response.data], { type: 'image/jpeg' });
+        const imageURL = URL.createObjectURL(image);
+        console.log(imageURL);
+        return imageURL;
+    } catch (error) {
+        console.log(error);
+        throw error;
+    }
+    }
 
     function deleteSong(id_song){
         console.log("delete");
@@ -46,6 +60,9 @@ function AccountSongs({user, token}){
                 if(user){
                     const response = await axios.get(`${process.env.REACT_APP_API_URL}/members/songs/${user}`);
                     setSongs(response.data);
+                    const imagePromises = response.data.map(item => getImageSong(item.id_song));
+                    const urls = await Promise.all(imagePromises);
+                    setImageURLs(urls);
                 }
             }catch(error){
                 setErrorSongs("Error");
@@ -67,9 +84,10 @@ function AccountSongs({user, token}){
                 <h1>Mes musiques</h1>
                 <div className={styles.musiques}>
                     {songs ? (
-                        songs.map((song) => (
+                        songs.map((song, index) => (
                             <div className={styles.musique}>
-                                <img src={`${process.env.REACT_APP_API_URL}/images/songs/${song.id_song}.jpg`} alt="Photo de profil"/>
+                                {/* <img src={`${process.env.REACT_APP_API_URL}/images/songs/${song.id_song}.jpg`} alt="Photo de profil"/> */}
+                                <img src={imageURLs[index]} alt="Cover song"/>
                                 <p className={styles.titre}>{song.song_name}</p>
                                 <audio controls src={`${process.env.REACT_APP_API_URL}/songs/${song.id_song}.mp3`}>
                                 </audio>

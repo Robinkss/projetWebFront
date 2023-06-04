@@ -18,6 +18,7 @@ function Artiste(){
     const [isFollowed, setIsFollowed] = useState(false);
     const [isYourself, setIsYourself] = useState(false);
     const [isConnected, setIsConnected] = useState(false);
+    const [imageURLs, setImageURLs] = useState([]);
     console.log("user");
     console.log(user);
 
@@ -26,6 +27,19 @@ function Artiste(){
         severity:null,
         message: null
       });
+
+    async function getImageSong(id_song) {
+    try {
+        const response = await axios.get(`${process.env.REACT_APP_API_URL}/songs/image/${id_song}`, { responseType: 'arraybuffer' });
+        const image = new Blob([response.data], { type: 'image/jpeg' });
+        const imageURL = URL.createObjectURL(image);
+        console.log(imageURL);
+        return imageURL;
+    } catch (error) {
+        console.log(error);
+        throw error;
+    }
+    }
     
       // Evénement qui permet de fermer le snackbar
     useEffect(() => {
@@ -112,6 +126,7 @@ function Artiste(){
                 const token = Cookies.get('token');
                 const decodedToken = decodeToken(token);
                 const id_member = decodedToken.id_member;
+                setIsConnected(true);
             }catch(error){    
                 setIsConnected(false);        
             }
@@ -124,6 +139,9 @@ function Artiste(){
                 if(user){
                     const response = await axios.get(`${process.env.REACT_APP_API_URL}/members/songs/${user}`);
                     setSongs(response.data);
+                    const imagePromises = response.data.map(item => getImageSong(item.id_song));
+                    const urls = await Promise.all(imagePromises);
+                    setImageURLs(urls);
                 }
             }catch(error){
                 setErrorSongs("Error");
@@ -159,6 +177,9 @@ function Artiste(){
                         const token = Cookies.get('token');
                         const decodedToken = decodeToken(token);
                         const id_member = decodedToken.id_member;
+                        if(id_member === user){
+                            setIsYourself(true);
+                        }
                         const response = await axios.get(`${process.env.REACT_APP_API_URL}/members/isFollow/${id_member}/${user}`,{
                             headers: {
                                 Authorization: `Bearer ${token}`,
@@ -213,9 +234,10 @@ function Artiste(){
                     <div className={styles.artistSongs}>
                         <h2>Ses morceaux</h2>
                         <div className={styles.songsContainer}>
-                            {songs && songs.map((song) => (
+                            {songs && songs.map((song, index) => (
                                 <div className={styles.songContainer}>
-                                    <img src={`${process.env.REACT_APP_API_URL}/images/songs/${song.id_song}.jpg`} alt="Cover song"/>
+                                    {/* <img src={`${process.env.REACT_APP_API_URL}/images/songs/${song.id_song}.jpg`} alt="Cover song"/> */}
+                                    <img src={imageURLs[index]} alt="Cover song"/>
                                     <p className={styles.name}>{artist.member_name}</p>
                                     <p className={styles.hyphen}>-</p>
                                     <p className={styles.titre}>{song.song_name}</p>

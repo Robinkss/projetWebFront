@@ -9,9 +9,23 @@ import { Link } from "react-router-dom";
 function SongsByGenre(){
     const [songs, setSongs] = useState(null);
     const [errorSongs, setErrorSongs] = useState(null);
+    const [imageURLs, setImageURLs] = useState([]);
     const location = useLocation();
     console.log("genre")
     console.log(location.state.genre.id_genre);
+
+    async function getImageSong(id_song) {
+        try {
+          const response = await axios.get(`${process.env.REACT_APP_API_URL}/songs/image/${id_song}`, { responseType: 'arraybuffer' });
+          const image = new Blob([response.data], { type: 'image/jpeg' });
+          const imageURL = URL.createObjectURL(image);
+          console.log(imageURL);
+          return imageURL;
+        } catch (error) {
+          console.log(error);
+          throw error;
+        }
+      }
 
     // Récupération des musiques d'un genre
     useEffect(() => {
@@ -19,6 +33,9 @@ function SongsByGenre(){
             try{
                 const response = await axios.get(`${process.env.REACT_APP_API_URL}/songs/genre/${location.state.genre.id_genre}`);
                 setSongs(response.data);
+                const imagePromises = response.data.map(item => getImageSong(item.id_song));
+                const urls = await Promise.all(imagePromises);
+                setImageURLs(urls);
             }catch(error){
                 setErrorSongs("Error");
                 if (error.response && error.response.status === 404) {
@@ -38,9 +55,11 @@ function SongsByGenre(){
             <h1>{location.state.genre.genre_name}</h1>
             <div className={styles.musiques}>
                 {songs ? (
-                    songs.map((song) => (
+                    songs.map((song, index) => (
                         <div className={styles.musique}>
-                            <img src={`${process.env.REACT_APP_API_URL}/images/songs/${song.id_song}.jpg`} alt="Cover song"/>
+                            {/* {<img src={`${process.env.REACT_APP_API_URL}/images/songs/${song.id_song}.jpg`} alt="Cover song"/>}
+                             */}
+                            <img src={imageURLs[index]} alt="Cover song"/>
                             <p className={styles.name}><Link to={`/artiste/${song.member.member_name}`} state={{ user: song.id_member }} >{song.member.member_name}</Link></p>
                             <p className={styles.hyphen}>-</p>
                             <p className={styles.titre}>{song.song_name}</p>

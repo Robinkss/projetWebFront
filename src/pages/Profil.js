@@ -25,13 +25,15 @@ function Profil(){
 
     async function getImage(id_user){
         try {
-            const image = process.env.REACT_APP_API_URL + `/images/members/${id_user}.jpg`;
-            /* const response = await axios.get(`${process.env.REACT_APP_API_URL}/members/image/${id_user}`, { responseType: 'arraybuffer' });
+            //const image = process.env.REACT_APP_API_URL + `/images/members/${id_user}.jpg`;
+            const response = await axios.get(`${process.env.REACT_APP_API_URL}/members/image/${id_user}`, { responseType: 'arraybuffer' });
             const image = new Blob([response.data], { type: 'image/png' });
             const imageURL = URL.createObjectURL(image);
-            console.log(imageURL); */
-            return image;
+            console.log(imageURL); 
+            return imageURL;
           } catch (error) {
+            const image = "./images/default_avatar.png"
+            setImage(image);
             console.log(error);
             throw error;
           }
@@ -73,14 +75,11 @@ function Profil(){
                 if(user){
                     const response = await axios.get(`${process.env.REACT_APP_API_URL}/members/${user}`);
                     setDataUser(response.data);
-                    console.log(response.data);
-                    try{
-                        const imagePromise = getImage(response.data.id_member);
-                        const imageURL = await Promise.resolve(imagePromise);
-                        setImage(imageURL); 
-                    }catch(error){
-                        setImage(null);
-                    }
+                    console.log(response.data); 
+                    const imagePromise = getImage(response.data.id_member);
+                    const imageURL = await Promise.resolve(imagePromise);
+                    setImage(imageURL); 
+                    
                     
                 }
             }catch(error){
